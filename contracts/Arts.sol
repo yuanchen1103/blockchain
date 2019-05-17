@@ -22,6 +22,10 @@ contract Arts {
 		  arts = _array;
 		  people = _p;
     }
+
+    function getArts() public view returns(Art[] memory) {
+        return arts;
+    }
     
     function getArtInfo(uint _artId) public payable returns(uint, string memory, string memory, Transaction[] memory) {
         return (artInfo[_artId].artId(), artInfo[_artId].artName(), peopleInfo[artInfo[_artId].owner()].name(), artInfo[_artId].getHistory());
