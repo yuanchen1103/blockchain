@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# compiled contracts
+/src/contracts
+
 # production
 /build
 
