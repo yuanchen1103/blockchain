@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import SimpleStorageContract from './contracts/SimpleStorage.json';
-import Arts from './contracts/Arts.json'
+import ExploreContainer from './components/Explore/ExploreContainer';
+import Arts from './contracts/Arts.json';
 import getWeb3 from './utils/getWeb3';
 import store from './configureStore';
 import {
@@ -10,10 +10,10 @@ import {
   setAccounts,
   setContract
 } from './actions/dapp';
-import './App.css';
+import './assets/styles/index.scss';
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = { loading: true };
 
   componentDidMount = async () => {
     try {
@@ -25,9 +25,9 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
+      const deployedNetwork = Arts.networks[networkId];
       const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
+        Arts.abi,
         deployedNetwork && deployedNetwork.address
       );
 
@@ -36,7 +36,7 @@ class App extends Component {
       store.dispatch(setWeb3(web3));
       store.dispatch(setAccounts(accounts));
       store.dispatch(setContract(instance));
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ loading: false });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -47,37 +47,31 @@ class App extends Component {
   };
 
   runExample = async () => {
-    console.log('test')
+    console.log('test');
     const { accounts, contract } = this.state;
 
     // Stores a given value, 5 by default.
     await contract.methods.set(5).send({ from: accounts[0] });
-
+    console.log(123);
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
-    console.log(response)
+    console.log(response);
     // Update state with the result.
     store.dispatch(setStorageValue(response));
     this.setState({ storageValue: response });
   };
 
   render() {
-    if (!this.state.web3) {
+    if (this.state.loading) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <Provider store={store}>
         <div className="App">
-          <p>Your Truffle Box is installed and ready.</p>
-          <h2>Smart Contract Example</h2>
-          <p>
-            If your contracts compiled and migrated successfully, below will
-            show a stored value of 5 (by default).
-          </p>
-          <p>
-            Try changing the value stored on <strong>line 40</strong> of App.js.
-          </p>
-          <div>The stored value is: {this.state.storageValue}</div>
+          <div className="main-wrapper">
+            <div className="header">DAPP GALLERY</div>
+            <ExploreContainer />
+          </div>
         </div>
       </Provider>
     );
