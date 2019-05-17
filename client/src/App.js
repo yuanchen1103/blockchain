@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import SimpleStorageContract from './contracts/SimpleStorage.json';
+import Arts from './contracts/Arts.json'
 import getWeb3 from './utils/getWeb3';
 import store from './configureStore';
 import {
@@ -46,6 +47,7 @@ class App extends Component {
   };
 
   runExample = async () => {
+    console.log('test')
     const { accounts, contract } = this.state;
 
     // Stores a given value, 5 by default.
@@ -53,7 +55,7 @@ class App extends Component {
 
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
-
+    console.log(response)
     // Update state with the result.
     store.dispatch(setStorageValue(response));
     this.setState({ storageValue: response });
