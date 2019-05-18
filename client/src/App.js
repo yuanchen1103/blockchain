@@ -38,9 +38,8 @@ class App extends Component {
       store.dispatch(setAccounts(accounts));
       store.dispatch(setContract(instance));
       this.setState({ web3, accounts, contract: instance }, () => {
-        this.runExample();
+        this.getAllArts();
       })
-      this.getAllArts()
       this.setState({ loading: false });
     } catch (error) {
       // Catch any errors for any of the above operations.
