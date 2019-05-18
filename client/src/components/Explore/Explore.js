@@ -4,7 +4,7 @@ import styles from './Explore.module.scss';
 
 const { Meta } = Card;
 
-const Explore = () => {
+const Explore = (props) => {
   const [modalVisible, changeModalVisible] = useState(false);
   const [name, changeName] = useState('');
   const [author, changeAuthor] = useState('');
@@ -13,6 +13,7 @@ const Explore = () => {
       message.error('Please fill in the name and the artist!');
       return;
     }
+    // props.contract.methods.addArt.send()
     changeModalVisible(false);
   };
   return (

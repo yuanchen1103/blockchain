@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ExploreContainer from './components/Explore/ExploreContainer';
 import Arts from './contracts/Arts.json';
 import getWeb3 from './utils/getWeb3';
@@ -13,7 +14,7 @@ import {
 import './assets/styles/index.scss';
 
 class App extends Component {
-  state = { loading: true };
+  state = { loading: true, web3: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
@@ -36,6 +37,10 @@ class App extends Component {
       store.dispatch(setWeb3(web3));
       store.dispatch(setAccounts(accounts));
       store.dispatch(setContract(instance));
+      this.setState({ web3, accounts, contract: instance }, () => {
+        this.runExample();
+      })
+      this.getAllArts()
       this.setState({ loading: false });
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -46,32 +51,39 @@ class App extends Component {
     }
   };
 
+  getAllArts = async () => {
+    const { accounts, contract } = this.state;
+    const response = await contract.methods.getArts.call();
+    console.log(response);
+  }
+
   runExample = async () => {
     console.log('test');
     const { accounts, contract } = this.state;
 
     // Stores a given value, 5 by default.
     await contract.methods.set(5).send({ from: accounts[0] });
-    console.log(123);
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
-    console.log(response);
     // Update state with the result.
     store.dispatch(setStorageValue(response));
     this.setState({ storageValue: response });
   };
 
   render() {
-    if (this.state.loading) {
+    const { contract, loading } = this.state;
+    if (loading) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <Provider store={store}>
         <div className="App">
+          <Router>
           <div className="main-wrapper">
             <div className="header">DAPP GALLERY</div>
-            <ExploreContainer />
+            <Route exact path="/" component={() => <ExploreContainer contract={contract}/>}/>
           </div>
+          </Router>
         </div>
       </Provider>
     );
