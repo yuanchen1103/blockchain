@@ -17,26 +17,26 @@ contract Arts {
 
     mapping(uint => People) peopleInfo;
 
-    
     constructor(Art[] memory _array, People[] memory _p) public payable {
 		  arts = _array;
 		  people = _p;
     }
 
     function getArts() public view returns(Art[] memory) {
-        return arts;
+        Art[] memory temp = new Art[](arts.length);
+        for (uint i = 0; i < arts.length; i++) {
+            temp[i] = arts[i];
+        }
+        return temp;
     }
-    
     function getArtInfo(uint _artId) public payable returns(uint, string memory, string memory, Transaction[] memory) {
         return (artInfo[_artId].artId(), artInfo[_artId].artName(), peopleInfo[artInfo[_artId].owner()].name(), artInfo[_artId].getHistory());
     }
-    
     function addPeople(uint _id, string memory _name) public payable {
         People p = (new People)(_id, _name);
         people.push(p);
         peopleInfo[_id] = p;
     }
-    
     function addArt(uint _artId, string memory name, uint owner) public payable {
         Art a = (new Art)(_artId, name, owner);
         arts.push(a);
@@ -63,5 +63,4 @@ contract Arts {
         artInfo[art].changeOwner(newOwner);
         transactionInfo[_transactionId] = t;
     }
-    
 }
